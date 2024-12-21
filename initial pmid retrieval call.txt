@@ -1,0 +1,1 @@
+esearch -db pubmed -query "0[dp]:2024/07/01[dp]" | efetch -format uid > pmids_until_20240701.txt
