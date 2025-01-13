@@ -1,3 +1,7 @@
+# Imports
+import xml.etree.ElementTree as ET
+import re
+
 # Find a PMID in a directory with XML files for PMIDs
 def findPMIDInXML(XML_dir: str, XML_file: list,  PMID: str):
     for el in XML_file:
