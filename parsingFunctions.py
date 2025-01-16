@@ -11,7 +11,12 @@ def findPMIDInXML(XML_dir: str, XML_file: list,  PMID: str):
         for node in root:
             if node.tag == 'PubmedArticle':
                 if node.find("./MedlineCitation/PMID").text.strip() == PMID:
-                    print(el)
+                    print(PMID + el)
+            elif node.tag == 'PubmedBookArticle':
+                if node.find("./BookDocument/PMID").text.strip() == PMID:
+                    print(PMID + el)
+            else:
+                print("No PubmedArticle or PubmedBookArticle tag for PMID: " + PMID)
 
 
 # Parse the XML files in a directory to extract articles' information
