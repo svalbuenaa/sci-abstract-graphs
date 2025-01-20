@@ -1,6 +1,7 @@
 # Imports
 import xml.etree.ElementTree as ET
 import re
+import pandas as pd
 
 # Find a PMID in a directory with XML files for PMIDs
 def findPMIDInXML(XML_dir: str, XML_file: list,  PMID: str):
@@ -20,14 +21,26 @@ def findPMIDInXML(XML_dir: str, XML_file: list,  PMID: str):
 
 
 # Parse the XML files in a directory to extract articles' information
-def parseXML(XML_dir: str, XML_file: list, XML_parsed: list):
+def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_nor_parsed: list, current_parsing_XML: str, DF_output: str):
+    number_files = len(XML_file)
     for el in XML_file:
+        current_parsing_XML = el
+        
+        # For each 100K papers, save intermediate file and print state 
+        if int(current_parsing_XML[:-4]) % 100000 == 0:
+            if int(current_parsing_XML[:-4]) != 0:
+                df = pd.DataFrame(XML_nor_parsed)
+                df.to_csv(DF_output)
+            
+            print("Currently parsing article: "+str(current_parsing_XML[:-4])+"/"+str(number_files*200))
+
         try:
             tree = ET.parse(XML_dir+el)
             root = tree.getroot()
     
             for node in root:
                 article_data = {}
+                not_parsed_XML_files = []
                 if node.tag == 'PubmedArticle':
                     # Type of entry
                     article_data['Type'] = 'Article'
@@ -202,6 +215,10 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list):
         
                 XML_parsed.append(article_data)
 
-        except ParseError:
-            print(el+" not found")
+        except:
+            print(el+" not parsed")
+            not_parsed_XML_files.append(el)
             continue
+
+        if current_parsing_XML == XML_file[-1]:
+            print("Last XML file parsed")
