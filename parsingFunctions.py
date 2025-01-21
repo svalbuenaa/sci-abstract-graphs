@@ -27,14 +27,18 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
         for el in XML_file:
             current_parsing_XML = el
             
-            # For each 100K papers, save intermediate file and print state 
+            # For each 500K papers, save intermediate file and print state 
             if int(current_parsing_XML[:-4]) % 100000 == 0:
-                if int(current_parsing_XML[:-4]) != 0:
+                if int(current_parsing_XML[:-4]) != 0 & int(current_parsing_XML[:-4]) % 500000 == 0:
                     df = pd.DataFrame(XML_parsed)
-                    df.to_csv(DF_output)
+                    df.to_csv(DF_output[:-4] + "_" + current_parsing_XML[:-4] + ".csv", index = False)
+                    XML_parsed = []
                 
-                print("Currently parsing article: "+str(current_parsing_XML[:-4])+"/"+str(number_files*200))
-    
+                print("Currently parsing article: " + str(current_parsing_XML[:-4]) + "/" + str(number_files*200))
+                with open(DF_output[:-4]+"_not_parsed.txt", 'w') as file:
+                    for row in not_parsed_XML_files:
+                    file.write(row+'\n')     
+                    
             try:
                 tree = ET.parse(XML_dir+el)
                 root = tree.getroot()
@@ -222,12 +226,12 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
                 continue
     
             if current_parsing_XML == XML_file[-1]:
+                df = pd.DataFrame(XML_parsed)
+                df.to_csv(DF_output[:-4] + "_" + current_parsing_XML[:-4] + ".csv", index = False)
                 print("Last XML file parsed")
+                with open(DF_output[:-4]+"_not_parsed.txt", 'w') as file:
+                    for row in not_parsed_XML_files:
+                    file.write(row+'\n')
 
     except KeyboardInterrupt:
-        print("\nParsing interrupted by user. Saving progress...")
-
-        # Save partially parsed data
-        df = pd.DataFrame(XML_parsed)
-        df.to_csv(DF_output, index=False)
-        print(f"Intermediate results saved to {DF_output}. Exiting gracefully.")
+        print("\nParsing interrupted by user")
