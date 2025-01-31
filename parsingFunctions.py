@@ -65,7 +65,7 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
         
                         # Title
                         title_node = node.find('./MedlineCitation/Article/ArticleTitle')
-                        article_data['Title'] = title_node.text.strip() if title_node is not None else None
+                        article_data['Title'] = title_node.text.strip() if title_node is not None and title_node.text is not None else None
         
                         # Abstract
                         abstract_node = node.find('./MedlineCitation/Article/Abstract')
@@ -154,7 +154,7 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
         
                         # Book title
                         book_title_node = node.find('./BookDocument/Book/BookTitle')
-                        article_data['BookTitle'] = book_title_node.text.strip() if book_title_node is not None else None
+                        article_data['BookTitle'] = book_title_node.text.strip() if book_title_node is not None and book_title_node.text is not None else None
             
                         # Title
                         title_node = node.find('./BookDocument/ArticleTitle')
