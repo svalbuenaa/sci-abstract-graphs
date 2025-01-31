@@ -91,7 +91,8 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
         
                             affiliations = []
                             for affiliation in author.findall('./AffiliationInfo/Affiliation'):
-                                affiliations.append(affiliation.text.strip())
+                                if affiliation.text:
+                                    affiliations.append(affiliation.text.strip())
         
                             author_info['Affiliation'] = affiliations
                             authors.append(author_info)
@@ -189,7 +190,8 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
         
                             affiliations = []
                             for affiliation in author.findall('./AffiliationInfo/Affiliation'):
-                                affiliations.append(affiliation.text.strip())
+                                if affiliation.text:
+                                    affiliations.append(affiliation.text.strip())
         
                             author_info['Affiliation'] = affiliations
                             authors.append(author_info)
