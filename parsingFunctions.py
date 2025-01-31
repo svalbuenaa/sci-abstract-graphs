@@ -36,8 +36,8 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
                 
                 print("Currently parsing article: " + str(current_parsing_XML[:-4]) + "/" + str(number_files*200))
                 with open(DF_output[:-4]+"_not_parsed.txt", 'w') as file:
-                    for row in not_parsed_XML_files:
-                    file.write(row+'\n')     
+                    for row in set(XML_not_parsed):
+                        file.write(row+'\n')     
                     
             try:
                 tree = ET.parse(XML_dir+el)
@@ -45,7 +45,6 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
         
                 for node in root:
                     article_data = {}
-                    not_parsed_XML_files = []
                     if node.tag == 'PubmedArticle':
                         # Type of entry
                         article_data['Type'] = 'Article'
@@ -222,7 +221,7 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
     
             except:
                 print(el+" not parsed")
-                not_parsed_XML_files.append(el)
+                XML_not_parsed.append(el)
                 continue
     
             if current_parsing_XML == XML_file[-1]:
@@ -230,8 +229,8 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
                 df.to_csv(DF_output[:-4] + "_" + current_parsing_XML[:-4] + ".csv", index = False)
                 print("Last XML file parsed")
                 with open(DF_output[:-4]+"_not_parsed.txt", 'w') as file:
-                    for row in not_parsed_XML_files:
-                    file.write(row+'\n')
+                    for row in XML_not_parsed:
+                        file.write(row+'\n')
 
     except KeyboardInterrupt:
         print("\nParsing interrupted by user")
