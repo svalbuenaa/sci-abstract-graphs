@@ -2,6 +2,7 @@
 import xml.etree.ElementTree as ET
 import re
 import pandas as pd
+import json
 
 # Find a PMID in a directory with XML files for PMIDs
 def findPMIDInXML(XML_dir: str, XML_file: list,  PMID: str):
@@ -236,3 +237,28 @@ def parseXML(XML_dir: str, XML_file: list, XML_parsed: list, XML_not_parsed: lis
 
     except KeyboardInterrupt:
         print("\nParsing interrupted by user")
+
+
+# Prepare embeddings obtained elsewhere for UMAP
+def prepareEmbeddingsforUMAP(sourceDFPath: str, inputEmbeddingsDFPath: str, outputEmbeddingsDFPath: str):
+    print("-Process initiated for csv: " + inputEmbeddingsDFPath.split("\\")[-1])
+    print("--Importing csv files")
+    df_source = pd.read_csv(sourceDFPath)
+    df_embeddings = pd.read_csv(inputEmbeddingsDFPath)
+    if df_source["PMID"] == df_embeddings["PMID"]:
+        pass
+    else:
+        print("----Error: PMIDs not matching in source and embeddings csv files")
+    
+    print("--Unfolding Article Embeddings")
+    df_embeddings["AbstractEmbedding_list"] = df_embeddings["AbstractEmbedding"].map(json.loads)
+
+    colnames = []
+    for dimension in range(len(df_embeddings["AbstractEmbedding_list"][0])):
+        colnames.append("Embedding_" + str(dimension))
+
+    df_embeddings[colnames] = df_embeddings["AbstractEmbedding_list"].to_list()
+
+    print("--Saving processed .csv")
+    df_embeddings = df_embeddings[["PMID", "Title"] + colnames]
+    df_embeddings.to_csv(outputEmbeddingsDFPath)
