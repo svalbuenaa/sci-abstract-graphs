@@ -262,3 +262,5 @@ def prepareEmbeddingsforUMAP(sourceDFPath: str, inputEmbeddingsDFPath: str, outp
     print("--Saving processed .csv")
     df_embeddings = df_embeddings[["PMID", "Title"] + colnames]
     df_embeddings.to_csv(outputEmbeddingsDFPath)
+
+    return df_embeddings
